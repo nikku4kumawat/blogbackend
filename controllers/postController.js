@@ -1,124 +1,79 @@
-// controllers/postController.js
-
 const Post = require("../models/Post");
 
-// ✅ Create first post
+// create first post
 exports.createPost = async (req, res) => {
+  const Post = require("../models/Post");
+
   try {
     const newPost = new Post({
       image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
     });
 
     await newPost.save();
-    res.status(201).json({ post: newPost });
+
+    res.json(newPost);
   } catch (error) {
     res.status(500).json({ message: "Post creation failed" });
   }
 };
 
-// ✅ Get a post
+// get post
 exports.getPost = async (req, res) => {
-  try {
-    const post = await Post.findOne();
-    if (!post) return res.status(404).json({ message: "No post found" });
-
-    res.json({ post });
-  } catch (err) {
-    res.status(500).json({ message: "Error fetching post" });
-  }
+  const post = await Post.findOne();
+  res.json(post);
 };
 
-// ✅ Like a post
+// like post
 exports.likePost = async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json({ message: "Post not found" });
-
-    post.likes += 1;
-    await post.save();
-    res.json({ post });
-  } catch (err) {
-    res.status(500).json({ message: "Error liking post" });
-  }
+  const post = await Post.findById(req.params.id);
+  post.likes++;
+  await post.save();
+  res.json(post);
 };
 
-// ✅ Dislike a post
+// 👎 Dislike
 exports.dislikePost = async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json({ message: "Post not found" });
-
-    post.dislikes += 1;
-    await post.save();
-    res.json({ post });
-  } catch (err) {
-    res.status(500).json({ message: "Error disliking post" });
-  }
+  const post = await Post.findById(req.params.id);
+  post.dislikes += 1;
+  await post.save();
+  res.json(post);
 };
 
-// ✅ Share a post
+// 📤 Share
 exports.sharePost = async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json({ message: "Post not found" });
-
-    post.shares += 1;
-    await post.save();
-    res.json({ post });
-  } catch (err) {
-    res.status(500).json({ message: "Error sharing post" });
-  }
+  const post = await Post.findById(req.params.id);
+  post.shares += 1;
+  await post.save();
+  res.json(post);
 };
 
-// ✅ Subscribe to a post
+// 🔔 Subscribe
 exports.subscribePost = async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json({ message: "Post not found" });
-
-    post.subscribers += 1;
-    await post.save();
-    res.json({ post });
-  } catch (err) {
-    res.status(500).json({ message: "Error subscribing post" });
-  }
+  const post = await Post.findById(req.params.id);
+  post.subscribers += 1;
+  await post.save();
+  res.json(post);
 };
 
-// ✅ Add comment
+// add comment
 exports.addComment = async (req, res) => {
-  try {
-    const { name, text } = req.body;
-    if (!name || !text) return res.status(400).json({ message: "Name & text required" });
+  const { name, text } = req.body;
+  const post = await Post.findById(req.params.id);
 
-    const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json({ message: "Post not found" });
+  post.comments.push({ name, text });
+  await post.save();
 
-    post.comments.push({ name, text });
-    await post.save();
-    res.json({ post });
-  } catch (err) {
-    res.status(500).json({ message: "Error adding comment" });
-  }
+  res.json(post);
 };
 
-// ✅ Delete comment
+// delete comment
 exports.deleteComment = async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.postId);
-    if (!post) return res.status(404).json({ message: "Post not found" });
+  const post = await Post.findById(req.params.postId);
 
-    const originalLength = post.comments.length;
-    post.comments = post.comments.filter(
-      (c) => c._id.toString() !== req.params.commentId
-    );
+  post.comments = post.comments.filter(
+    (c) => c._id.toString() !== req.params.commentId,
+  );
 
-    if (post.comments.length === originalLength) {
-      return res.status(404).json({ message: "Comment not found" });
-    }
-
-    await post.save();
-    res.json({ post });
-  } catch (err) {
-    res.status(500).json({ message: "Error deleting comment" });
-  }
+  await post.save();
+  res.json(post);
 };
