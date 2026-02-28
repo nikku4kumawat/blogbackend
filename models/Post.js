@@ -1,14 +1,18 @@
+// models/Post.js
+
 const mongoose = require("mongoose");
 
+// ✅ Comment schema
 const commentSchema = new mongoose.Schema({
-  name: String,
-  text: String,
+  name: { type: String, required: true },
+  text: { type: String, required: true },
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
 
+// ✅ Post schema
 const postSchema = new mongoose.Schema({
   image: {
     type: String,

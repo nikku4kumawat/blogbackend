@@ -1,3 +1,5 @@
+// server.js
+
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -6,25 +8,25 @@ const postRoutes = require("./routes/postRoutes");
 
 dotenv.config();
 
-// DATABASE CONNECT
+// ✅ Connect to Database
 connectDB();
 
 const app = express();
 
-// middlewares
+// ✅ Middlewares
 app.use(cors());
 app.use(express.json());
 
-// routes
+// ✅ Routes
 app.use("/api/post", postRoutes);
 
-// testing route
+// ✅ Testing route
 app.get("/", (req, res) => {
   res.send("Image Social Backend Running 🚀");
 });
 
-// port
-const PORT = process.env.PORT || 4000;
+// ✅ Server port
+const PORT = process.env.PORT || 4001;
 
 app.listen(PORT, () => {
   console.log("Server started on port " + PORT);
