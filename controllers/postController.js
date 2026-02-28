@@ -6,7 +6,7 @@ exports.createPost = async (req, res) => {
 
   try {
     const newPost = new Post({
-      image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+      image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
     });
 
     await newPost.save();
@@ -31,6 +31,30 @@ exports.likePost = async (req, res) => {
   res.json(post);
 };
 
+// 👎 Dislike
+exports.dislikePost = async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  post.dislikes += 1;
+  await post.save();
+  res.json(post);
+};
+
+// 📤 Share
+exports.sharePost = async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  post.shares += 1;
+  await post.save();
+  res.json(post);
+};
+
+// 🔔 Subscribe
+exports.subscribePost = async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  post.subscribers += 1;
+  await post.save();
+  res.json(post);
+};
+
 // add comment
 exports.addComment = async (req, res) => {
   const { name, text } = req.body;
@@ -47,7 +71,7 @@ exports.deleteComment = async (req, res) => {
   const post = await Post.findById(req.params.postId);
 
   post.comments = post.comments.filter(
-    (c) => c._id.toString() !== req.params.commentId
+    (c) => c._id.toString() !== req.params.commentId,
   );
 
   await post.save();
