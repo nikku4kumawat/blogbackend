@@ -2,7 +2,7 @@ const Post = require("../models/Post");
 
 // create first post
 exports.createPost = async (req, res) => {
-  const Post = require("../models/Post");
+  
 
   try {
     const newPost = new Post({
