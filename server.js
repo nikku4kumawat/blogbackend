@@ -3,6 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const postRoutes = require("./routes/postRoutes");
+const Post = require("./models/Post"); // ⭐ add
 
 dotenv.config();
 
@@ -22,6 +23,28 @@ app.use("/api/post", postRoutes);
 app.get("/", (req, res) => {
   res.send("Image Social Backend Running 🚀");
 });
+
+// ⭐ FIRST POST AUTO CREATE
+const createPost = async () => {
+  const existingPost = await Post.findOne();
+
+  if (!existingPost) {
+    const post = await Post.create({
+       image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800",
+      likes: 0,
+      dislikes: 0,
+      shares: 0,
+      subscribers: 0,
+      comments: [],
+    });
+
+    console.log("Default Post Created:", post);
+  } else {
+    console.log("Post already exists");
+  }
+};
+
+createPost();
 
 // port
 const PORT = process.env.PORT || 5000;
